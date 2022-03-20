@@ -1,14 +1,13 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include <ctime>
-#include <iostream>
-#include <random>
+#include <SFML/Audio.hpp>
 
 #include "Player.h"
 #include "Ball.h"
+#include "Score.h"
+#include "Audio.h"
 
 using namespace sf;
-using namespace std;
 
 int main()
 {
@@ -17,9 +16,13 @@ int main()
     RenderWindow window(VideoMode(window_width, window_height), "Ping-Pong!");
     window.setVerticalSyncEnabled(true);
 
-    Ball ball(10.f, 15.f);
+    Ball ball(15.f, 15.f);
 
     Player player(10.f, 100.f);
+
+    Score score(window_width);
+
+    Audio audio;
 
     while (window.isOpen())
     {
@@ -35,14 +38,20 @@ int main()
         }
 
         ball.moveBall();
-        ball.checkBorderCollision(window_width, window_height);
-        ball.checkPlayerCollision(player.player_shape.getPosition().x, player.player_shape.getPosition().y, player.player_height);
+        if (ball.checkBorderCollision(window_width, window_height))
+            audio.playSound();
+        if (ball.checkPlayerCollision(player.player_shape.getPosition().x, player.player_shape.getPosition().y, player.player_height))
+        {
+            score.updateScore();
+            audio.playSound();
+        }
 
         player.movePlayer(Mouse::getPosition(window).y, window_height);
 
         window.clear();
         window.draw(ball.shape);
         window.draw(player.player_shape);
+        window.draw(score.text);
         window.display();
     }
 

@@ -4,6 +4,7 @@ Ball::Ball(float speed, float radius)
 {
     this->speed = speed;
     this->radius = radius;
+    this->playerTrigger = true;
 
     shape.setRadius(radius);
     shape.setFillColor(Color::Red);
@@ -27,21 +28,46 @@ void Ball::moveBall()
     shape.move(direction * speed);
 }
 
-void Ball::checkBorderCollision(const int window_width, const int window_height)
+bool Ball::checkBorderCollision(const int window_width, const int window_height)
 {
-    if (shape.getPosition().y <= -radius / 2)
+    if (shape.getPosition().y <= -radius / 2
+        || shape.getPosition().y >= window_height - radius * 2)
+    {
         direction.y *= -1;
-    else if (shape.getPosition().y >= window_height - radius * 2)
-        direction.y *= -1;
+        playerTrigger = true;
+        return true;
+    }
 
     if (shape.getPosition().x >= window_width - radius * 2)
+    {
         direction.x *= -1;
+        playerTrigger = true;
+        return true;
+    }
+
+    return false;
 }
 
-void Ball::checkPlayerCollision(const float player_x, const float player_y, const float player_height)
+bool Ball::checkPlayerCollision(const float player_x, const float player_y, const float player_height)
 {
-    if (shape.getPosition().y >= player_y
-        && shape.getPosition().y <= player_y + player_height
-        && shape.getPosition().x <= player_x + radius)
-        direction.x *= -1;
+    if (playerTrigger)
+    {
+        if (shape.getPosition().y >= player_y - radius
+            && shape.getPosition().y <= player_y + player_height
+            && shape.getPosition().x <= player_x + radius
+            && shape.getPosition().x >= player_x)
+        {
+            direction.x *= -1;
+            playerTrigger = false;
+            return true;
+        }
+    }
+
+    if (shape.getPosition().x <= -radius * 2)
+    {
+        direction.x = 0;
+        direction.y = 0;
+    }
+
+    return false;
 }

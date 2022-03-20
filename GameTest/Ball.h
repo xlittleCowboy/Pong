@@ -12,6 +12,7 @@ public:
     float radius;
     CircleShape shape;
     Vector2f direction;
+    bool playerTrigger;
 
     Ball(float speed, float radius);
 
@@ -19,8 +20,8 @@ public:
 
     void moveBall();
 
-    void checkBorderCollision(const int window_width, const int window_height);
+    bool checkBorderCollision(const int window_width, const int window_height);
 
-    void checkPlayerCollision(const float player_x, const float player_y, const float player_height);
+    bool checkPlayerCollision(const float player_x, const float player_y, const float player_height);
 };
 
