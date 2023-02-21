@@ -2,16 +2,17 @@
 
 #include <SFML/Graphics.hpp>
 
-using namespace sf;
-
 class Player
 {
 public:
-    float player_width, player_height;
-    RectangleShape player_shape;
+    Player(sf::Vector2f Size, const sf::Color& Color = sf::Color::White);
 
-    Player(float player_width, float player_height);
+    void Update(int MouseY, int BorderHeight, sf::RenderWindow& Window);
 
-    void movePlayer(const int mouse_position_y, const int window_height);
+    sf::Vector2f GetPosition() { return Shape.getPosition(); }
+    sf::Vector2f GetSize() { return Shape.getSize(); }
+
+private:
+    sf::RectangleShape Shape;
 };
 

@@ -2,18 +2,18 @@
 
 #include <SFML/Graphics.hpp>
 
-using namespace sf;
-
 class Score
 {
 private:
-	Font font;
+	sf::Font Font;
+	sf::Text Text;
+	int HitScore;
 
 public:
-	Text text;
-	int score;
-	Score(float window_width);
-	void loadFont();
-	void updateScore();
+	Score(sf::Vector2f ScorePosition, const sf::Color& Color = sf::Color::White);
+	
+	void IncrementScore();
+
+	const sf::Text& GetText() { return Text; }
 };
 

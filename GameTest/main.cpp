@@ -7,53 +7,76 @@
 #include "Score.h"
 #include "Audio.h"
 
-using namespace sf;
+/*
+    MOVE PLAYER WITH MOUSE
+    PRESS R TO RESTART
+    CHANGE BALL, PLAYER & SCORE PARAMETERS AT THE START OF main()
+*/
 
 int main()
 {
-    int window_width = 1280, window_height = 720;
+    // Window Setup
+    const int WindowWidth = 800;
+    const int WindowHeight = 800;
 
-    RenderWindow window(VideoMode(window_width, window_height), "Ping-Pong!");
-    window.setVerticalSyncEnabled(true);
+    RenderWindow Window(VideoMode(WindowWidth, WindowHeight), "Pong", sf::Style::Close);
+    Window.setVerticalSyncEnabled(true);
 
-    Ball ball(15.f, 15.f);
+    // Ball, Player & Score Setup
+    Ball* MainBall = new Ball(10.0f, 15.0f, WindowWidth, WindowHeight, sf::Color(233, 0, 100));
 
-    Player player(10.f, 100.f);
+    Player* MainPlayer = new Player(sf::Vector2f(10.0f, 100.0f), sf::Color(179, 0, 94));
 
-    Score score(window_width);
+    Score* MainScore = new Score(sf::Vector2f(WindowWidth / 2, 10), sf::Color(179, 0, 94));
 
-    Audio audio;
-
-    while (window.isOpen())
+    // Main Loop
+    while (Window.isOpen())
     {
-        Event event;
-        while (window.pollEvent(event))
+        Event Event;
+        while (Window.pollEvent(Event))
         {
-            switch (event.type)
+            if (Event.type == sf::Event::Closed)
             {
-                case Event::Closed:
-                    window.close();
-                    break;
+                Window.close();
+            }
+            if (Event.type == sf::Event::KeyPressed)
+            {
+                if (Event.key.code == sf::Keyboard::Escape)
+                {
+                    Window.close();
+                }
+
+                if (Event.key.code == sf::Keyboard::R)
+                {
+                    delete MainBall;
+                    delete MainPlayer;
+                    delete MainScore;
+
+                    MainBall = new Ball(10.0f, 15.0f, WindowWidth, WindowHeight, sf::Color(233, 0, 100));
+
+                    MainPlayer = new Player(sf::Vector2f(10.0f, 100.0f), sf::Color(179, 0, 94));
+
+                    MainScore = new Score(sf::Vector2f(WindowWidth / 2, 10), sf::Color(179, 0, 94));
+                }
             }
         }
 
-        ball.moveBall();
-        if (ball.checkBorderCollision(window_width, window_height))
-            audio.playSound();
-        if (ball.checkPlayerCollision(player.player_shape.getPosition().x, player.player_shape.getPosition().y, player.player_height))
-        {
-            score.updateScore();
-            audio.playSound();
-        }
+        // Draw & Display
+        Window.clear();
 
-        player.movePlayer(Mouse::getPosition(window).y, window_height);
+        sf::RectangleShape Background;
+        Background.setSize(sf::Vector2f(WindowWidth, WindowHeight));
+        Background.setFillColor(sf::Color(6, 0, 71));
+        Window.draw(Background);
+        
+        MainBall->Update(MainPlayer->GetPosition(), MainPlayer->GetSize().y, Window, MainScore);
+        MainPlayer->Update(Mouse::getPosition(Window).y, WindowHeight, Window);
 
-        window.clear();
-        window.draw(ball.shape);
-        window.draw(player.player_shape);
-        window.draw(score.text);
-        window.display();
+        Window.display();
     }
+
+    delete MainBall;
+    delete MainPlayer;
 
     return 0;
 }

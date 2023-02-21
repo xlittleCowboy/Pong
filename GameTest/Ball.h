@@ -1,27 +1,37 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "rnd.h"
-
-using namespace sf;
+#include <SFML/Audio.hpp>
+#include "Random.h"
+#include "Score.h"
 
 class Ball
 {
 public:
-    float speed;
-    float radius;
-    CircleShape shape;
-    Vector2f direction;
-    bool playerTrigger;
+    Ball(float Speed, float Radius, float BorderWidth, float BorderHeight, const sf::Color& Color = sf::Color::White);
 
-    Ball(float speed, float radius);
+    void Update(sf::Vector2f PlayerPosition, float PlayerHeight, sf::RenderWindow& Window, Score* HitScore = nullptr);
 
-    void getStartDirection();
+private:
+    float Speed;
+    float Radius;
+    sf::CircleShape Shape;
+    sf::Vector2f MoveDirection;
 
-    void moveBall();
+    bool CanCollideWithPlayer;
 
-    bool checkBorderCollision(const int window_width, const int window_height);
+    sf::SoundBuffer HitSoundBuffer;
+    sf::Sound HitSound;
 
-    bool checkPlayerCollision(const float player_x, const float player_y, const float player_height);
+    float BorderWidth;
+    float BorderHeight;
+
+    sf::Vector2f GetStartDirection();
+
+    void Move();
+
+    bool CheckBorderCollision(int BorderWidth, int BorderHeight);
+
+    bool CheckPlayerCollision(sf::Vector2f PlayerPosition, float PlayerHeight);
 };
 

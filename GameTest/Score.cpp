@@ -1,24 +1,22 @@
 #include "Score.h"
 #include <iostream>
 
-Score::Score(float window_width)
+Score::Score(sf::Vector2f ScorePosition, const sf::Color& Color)
 {
-	loadFont();
-	score = 0;
+	Font.loadFromFile("arial.ttf");
 
-	text.setFont(font);
-	text.setString("0");
-	text.setCharacterSize(48);
-	text.setFillColor(Color::White);
-	text.setPosition(window_width / 2, 10);
+	HitScore = 0;
+
+	Text.setFont(Font);
+	Text.setString("0");
+	Text.setCharacterSize(48);
+	Text.setFillColor(Color);
+	Text.setOutlineColor(sf::Color::White);
+	Text.setOutlineThickness(2.5f);
+	Text.setPosition(ScorePosition);
 }
 
-void Score::loadFont()
+void Score::IncrementScore()
 {
-	font.loadFromFile("arial.ttf");
-}
-
-void Score::updateScore()
-{
-	text.setString(std::to_string(++score));
+	Text.setString(std::to_string(++HitScore));
 }
